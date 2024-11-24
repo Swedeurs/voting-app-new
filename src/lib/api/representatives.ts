@@ -5,10 +5,10 @@ export function getRepresentatives() {
 }
 
 export function addRepresentative(name: string, email: string) {
-  // Normalize email to lowercase for case-insensitive uniqueness check
+
   const normalizedEmail = email.toLowerCase();
 
-  // Ensure email is unique (case-insensitive)
+
   if (
     representatives.some((rep) => rep.email.toLowerCase() === normalizedEmail)
   ) {
