@@ -1,25 +1,19 @@
-import { elections } from '@/src/lib/mockData';
+// src/pages/api/elections/index.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-
+import { getElections, addElection } from '@/src/lib/api/elections';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
-    res.status(200).json(elections);
+    return res.status(200).json(getElections());
   } else if (req.method === 'POST') {
     const { name, choices } = req.body;
-    const newElection = {
-      id: elections.length + 1,
-      name,
-      choices,
-      status: 'ongoing',
-      votes: choices.reduce((acc: Record<string, number>, choice: string) => {
-        acc[choice] = 0;
-        return acc;
-      }, {}),
-    };
-    elections.push(newElection);
-    res.status(201).json(newElection);
+    try {
+      const newElection = addElection(name, choices);
+      return res.status(201).json(newElection);
+    } catch (error: any) {
+      return res.status(400).json({ message: error.message });
+    }
   } else {
-    res.status(405).json({ message: 'Method Not Allowed' });
+    return res.status(405).json({ message: 'Method Not Allowed' });
   }
 }
