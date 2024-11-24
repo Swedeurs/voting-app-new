@@ -1,7 +1,12 @@
+
 import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 
-export default function VotePage() {
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+export default function ElectionPage() {
   const router = useRouter();
   const { id } = router.query;
 
@@ -32,6 +37,12 @@ export default function VotePage() {
   const handleVote = async () => {
     setSuccessMessage('');
     setErrorMessage('');
+
+    if (!choice) {
+      setErrorMessage('Please select an option before submitting your vote.');
+      return;
+    }
+
     try {
       const response = await fetch(`/api/elections/${id}`, {
         method: 'POST',
@@ -99,6 +110,46 @@ export default function VotePage() {
     }
   };
 
+  // Function to determine the winner of the election
+  const determineWinner = () => {
+    if (!election || !election.votes) {
+      return null;
+    }
+
+    const voteCounts = Object.entries(election.votes);
+    if (voteCounts.length === 0) {
+      return null;
+    }
+
+    // Find the choice with the highest number of votes
+    const winner = voteCounts.reduce((max, current) =>
+      current[1] > max[1] ? current : max
+    );
+
+    return winner[0]; // Return the name of the choice with the most votes
+  };
+
+  // Function to generate chart data for Chart.js
+  const getChartData = () => {
+    if (!election || !election.votes) return { labels: [], datasets: [] };
+
+    const labels = Object.keys(election.votes);
+    const data = Object.values(election.votes);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Number of Votes',
+          data,
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+        },
+      ],
+    };
+  };
+
   if (!election) {
     return <div>Loading...</div>;
   }
@@ -143,6 +194,7 @@ export default function VotePage() {
             <button
               onClick={handleVote}
               className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+              disabled={!choice}
             >
               Submit Representative Vote
             </button>
@@ -192,17 +244,21 @@ export default function VotePage() {
         </ul>
       </div>
 
-      {/* Display current public preferences */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Current Public Preferences:</h2>
-        <ul>
-          {election.publicPreferences && Object.keys(election.publicPreferences).map((option) => (
-            <li key={option} className="mb-2">
-              {option}: {election.publicPreferences[option]} votes
-            </li>
-          ))}
-        </ul>
-      </div>
+      {/* Display winner if the election is concluded */}
+      {election.status === 'concluded' && (
+        <div className="mt-10 p-6 bg-yellow-100 rounded-lg">
+          <h2 className="text-3xl font-bold mb-4">Election Results</h2>
+          <p className="text-xl">
+            The winning choice is: <strong>{determineWinner()}</strong>
+          </p>
+
+          {/* Chart displaying the number of votes per choice */}
+          <div className="mt-6">
+            <h3 className="text-2xl font-bold mb-4">Vote Distribution Chart</h3>
+            <Bar data={getChartData()} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
