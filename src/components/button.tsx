@@ -1,6 +1,6 @@
 // src/components/Button.tsx
 
-import React from 'react';
+import React from "react";
 
 interface ButtonProps {
   onClick: () => void;
@@ -9,7 +9,12 @@ interface ButtonProps {
   disabled?: boolean;
 }
 
-export default function Button({ onClick, label, className = '', disabled = false }: ButtonProps) {
+export default function Button({
+  onClick,
+  label,
+  className = "",
+  disabled = false,
+}: ButtonProps) {
   return (
     <button
       onClick={onClick}
