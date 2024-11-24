@@ -1,7 +1,5 @@
-// /pages/api/elections/[id].ts
-
 import { NextApiRequest, NextApiResponse } from 'next';
-import { elections, representatives } from '@/lib/mockData'; // Correct import
+import { elections } from '@/lib/mockData';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
@@ -12,8 +10,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     return res.status(404).json({ message: 'Election not found' });
   }
 
+  if (req.method === 'GET') {
+    return res.status(200).json(election);
+  }
+
   if (req.method === 'POST') {
     const { representativeId, choice } = req.body;
+
+    if (election.status === 'concluded') {
+      return res.status(400).json({ message: 'Election has already concluded.' });
+    }
 
     // Validate the choice
     if (!election.choices.includes(choice)) {
@@ -30,6 +36,16 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     election.votes[choice] += representative.publicVotes;
 
     return res.status(200).json({ message: 'Vote registered successfully', election });
+  }
+
+  // Add PATCH endpoint to conclude the election
+  if (req.method === 'PATCH') {
+    if (election.status === 'concluded') {
+      return res.status(400).json({ message: 'Election has already concluded.' });
+    }
+
+    election.status = 'concluded';
+    return res.status(200).json({ message: 'Election concluded successfully', election });
   }
 
   return res.status(405).json({ message: 'Method Not Allowed' });
