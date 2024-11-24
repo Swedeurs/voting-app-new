@@ -3,9 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-
-  // Check if the `id` is present
-  if (!id) {
+ if (!id) {
     return res.status(400).json({ message: "Election ID is required." });
   }
 
@@ -41,7 +39,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     if (representativeId) {
-      // Representative Voting Logic
+
       const representative = representatives.find(
         (rep) => rep.id === representativeId,
       );
@@ -49,17 +47,17 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return res.status(404).json({ message: "Representative not found." });
       }
 
-      // Update the votes for the chosen option
+
       election.votes[choice] += 1;
 
-      // Record the representative's vote
+
       election.representativeVotes[representativeId] = choice;
 
       return res
         .status(200)
         .json({ message: "Vote registered successfully.", election });
     } else {
-      // Public Voting Logic
+
       election.publicPreferences[choice] += 1;
 
       return res
@@ -77,7 +75,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
     election.status = "concluded";
 
-    // Calculate agreement rates for each representative
+
     const agreementRates = representatives.map((rep) => {
       const repVote = election.representativeVotes[rep.id];
       if (!repVote) {

@@ -1,11 +1,10 @@
 import { elections, representatives } from "@/src/lib/mockData";
 
-// Function to get all elections
+
 export function getElections() {
   return elections;
 }
 
-// Function to add a new election
 export function addElection(name: string, choices: string[]) {
   const newElection = {
     id: elections.length + 1,
@@ -33,7 +32,6 @@ export function addElection(name: string, choices: string[]) {
   return newElection;
 }
 
-// Function to register a vote in an election
 export function registerVote(
   electionId: number,
   representativeId: number | null,
@@ -61,8 +59,6 @@ export function registerVote(
 
   return election;
 }
-
-// Function to conclude the election
 export function concludeElection(electionId: number) {
   const election = elections.find((e) => e.id === electionId);
   if (!election) throw new Error("Election not found");
