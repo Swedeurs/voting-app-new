@@ -1,6 +1,4 @@
-// src/components/Input.tsx
-
-import React from 'react';
+import React from "react";
 
 interface InputProps {
   type: string;
@@ -11,7 +9,14 @@ interface InputProps {
   className?: string;
 }
 
-export default function Input({ type, value, onChange, label, placeholder = '', className = '' }: InputProps) {
+export default function Input({
+  type,
+  value,
+  onChange,
+  label,
+  placeholder = "",
+  className = "",
+}: InputProps) {
   return (
     <div className={`mb-4 ${className}`}>
       <label className="block mb-2 font-semibold">{label}</label>
