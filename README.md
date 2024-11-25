@@ -127,19 +127,6 @@ More Granular Voting Metrics: Track the exact percentage of public agreement wit
 
 Testing: Add unit and integration tests to improve reliability.
 
-Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request or open an Issue.
-
-Fork the repository.
-
-Create your feature branch (git checkout -b feature/your-feature).
-
-Commit your changes (git commit -m 'Add some feature').
-
-Push to the branch (git push origin feature/your-feature).
-
-Open a Pull Request.
 
 License
 
